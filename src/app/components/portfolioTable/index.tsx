@@ -5,7 +5,8 @@ import { GrEdit } from "react-icons/gr";
 import { AiOutlineDelete } from "react-icons/ai";
 
 interface Iprops{
-    portfolio:Portfolio
+    portfolio:Portfolio,
+    delete: (id:number) => void;
 }
 const PortfolioTable = (props:Iprops) => {
   return (
@@ -53,7 +54,10 @@ const PortfolioTable = (props:Iprops) => {
                         <IconButton aria-label='edit' icon={<GrEdit/>} variant={'outline'}/>
                     </Td>
                     <Td>
-                        <IconButton aria-label='delete' color={'red'} icon={<AiOutlineDelete/>} variant={'outline'}/>
+                        <IconButton 
+                        aria-label='delete' color={'red'} icon={<AiOutlineDelete/>} variant={'outline'}
+                        onClick={() => {props.delete(el.id)}}
+                        />
                     </Td>
                 
                 </Tr>

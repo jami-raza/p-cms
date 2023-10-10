@@ -2,11 +2,12 @@ import { upload } from "@/app/lib/cloudinaryUpload";
 import { supabase } from "@/app/lib/supabaseInitialize";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request
+export async function PUT(request: Request,
+{ params }: { params: { id: string } }
   
   ) {
     try {
-      
+      console.log(params, "PARAMS")
         const json = await request.formData()
         
         console.log(json, "REquest")
@@ -106,9 +107,14 @@ export async function POST(request: Request
     }
   }
 
-  export async function GET(request: Request) {
+  export async function GET(request: Request, 
+{ params }: { params: { id: string } }
+    
+    ) {
+
+        console.log(params, "PARAMS")
     const { data, error } = await supabase.from('portfolio')
-    .select()
+    .select().eq(`id`,params.id)
 
     console.log(data, "DATA Supa base")
     console.log(error, "Error Supa base")
@@ -127,4 +133,31 @@ return new NextResponse(JSON.stringify(json_response), {
   headers: { "Content-Type": "application/json" },
 });
 }
+
+export async function DELETE(request: Request, 
+  { params }: { params: { id: string } }
+      
+      ) {
+  
+          console.log(params, "PARAMS")
+      const { data, error } = await supabase.from('portfolio')
+      .delete().eq(`id`,params.id)
+  
+      console.log(data, "DATA Supa base")
+      console.log(error, "Error Supa base")
+      if(error){
+        return new NextResponse(JSON.stringify(error), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+      }
+  let json_response = {
+    status: "success",
+    data: data
+  };
+  return new NextResponse(JSON.stringify(json_response), {
+    status: 201,
+    headers: { "Content-Type": "application/json" },
+  });
+  }
 
