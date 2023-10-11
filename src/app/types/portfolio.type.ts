@@ -5,8 +5,8 @@ export type IPorfolio = {
     description: string,
     category: string,
     subtitle: string,
-    tags: string[],
-    gallery: string[]
+    tags: string,
+    gallery: string
 }
 export type Portfolio = {
     data: IPorfolio[],

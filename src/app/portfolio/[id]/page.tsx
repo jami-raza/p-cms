@@ -1,10 +1,11 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Button, FormControl, FormErrorMessage, FormLabel, Input, Textarea, Container, HStack, Icon, useToast } from '@chakra-ui/react';
+import { Button, FormControl, FormErrorMessage, FormLabel, Input, Textarea, Container, HStack, Icon, useToast, Image, Box } from '@chakra-ui/react';
 import { useForm, Controller } from 'react-hook-form';
 import FileUpload from '@/app/components/fileUpload';
 import { FiFile } from 'react-icons/fi'
 import GalleryBox from '@/app/components/galleryBox';
+import { Portfolio } from '@/app/types/portfolio.type';
 
 interface FormData {
   title: string;
@@ -21,7 +22,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryImages, setGalleryImages] = useState<string[]>([])
   const toast = useToast()
-  
+  const [data, setData] = useState<Portfolio | null>()
   useEffect(() => {
     getPortfolio()
 }, [])
@@ -33,7 +34,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
             const response = await fetch(`/api/portfolio/${params.id}`, {method:'GET'})
             const data = await response.json()
             console.log(data, "DATA")
-        
+            setData(data);
         } catch (error) {
             console.log(error, "Error")
         }
@@ -42,9 +43,9 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
 
 
   const { handleSubmit, register, control, formState: { errors }, reset } = useForm<FormData>({
-    defaultValues:{
-      title:"asdasd"
-    }
+    // defaultValues:{
+    //   title:"asdasd"
+    // }
   });
 
   const onSubmit = async (formData: FormData) => {
@@ -148,15 +149,20 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
 
   return (
     <Container my={'20px'}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {data?.data.map((el,i)=>{
+      
+    
+        return(
+      
+      <form key={i} onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={!!errors.title}>
           <FormLabel>Title</FormLabel>
           <Controller
             name="title"
             control={control}
-
+            defaultValue={el.name}
             rules={{ required: 'Title is required' }}
-            render={({ field }) => <Input {...field} />}
+            render={({ field }) => <Input {...field}/>}
           />
           <FormErrorMessage>{errors.title && errors.title.message}</FormErrorMessage>
         </FormControl>
@@ -166,7 +172,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
           <Controller
             name="subtitle"
             control={control}
-
+            defaultValue={el.subtitle}
             rules={{ required: 'Subtitle is required' }}
             render={({ field }) => <Input {...field} />}
           />
@@ -178,7 +184,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
           <Controller
             name="description"
             control={control}
-
+            defaultValue={el.description}
             rules={{ required: 'Description is required' }}
             render={({ field }) => <Textarea {...field} />}
           />
@@ -186,6 +192,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
         </FormControl>
         <FormControl isInvalid={!!errors.image}>
           <FormLabel>Feature Image</FormLabel>
+          <Image src={el.image} alt='Image' w={'120px'}  my={'15px'}/>
           <FileUpload
             accept={'image/*'}
             multiple={false}
@@ -193,7 +200,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
 
           >
             <Button leftIcon={<Icon as={FiFile} />}>
-              Upload
+              Change
             </Button>
           </FileUpload>
           {/* <FileUpload
@@ -208,11 +215,15 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
           </FileUpload> */}
           <FormErrorMessage>{errors.image && errors.image.message}</FormErrorMessage>
         </FormControl>
-        <FormControl >
+        <FormControl mb={'20px'}>
           <FormLabel>Gallery</FormLabel>
-          
+          <Box display={'flex'} gap={5} my={'15px'}>
+          {JSON.parse(el.gallery).map((li:any,i:any)=>(
+            <Image key={i} src={`${li}`} alt='Image' w={'100px'}/>
+            ))}
+            </Box>
           <Button leftIcon={<Icon as={FiFile} />} onClick={() => { setGalleryOpen(true) }}>
-            Cloudinary Gallery
+           Change Cloudinary Gallery
           </Button>
         </FormControl>
 
@@ -228,7 +239,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
           <Controller
             name="category"
             control={control}
-
+            defaultValue={el.category}
             rules={{ required: 'Category is required' }}
             render={({ field }) => <Input {...field} />}
           />
@@ -243,6 +254,7 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
 
               name="tags"
               control={control}
+              defaultValue={JSON.parse(el.tags).join(",")}
               rules={{ required: 'Tags are required' }}
               render={({ field }) => {
                 console.log(field, "asd")
@@ -266,7 +278,8 @@ export default function UpdatePortfolio({params}:{params:{id:string}}) {
           Submit
         </Button>
       </form>
-
+  )
+})}
       <GalleryBox singleSelect={false} isOpen={galleryOpen} onClose={() => setGalleryOpen(false)} handleSelected={handleSelected} />
     </Container>
   )
