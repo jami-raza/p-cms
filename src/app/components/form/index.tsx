@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import { Button, FormControl, FormErrorMessage, FormLabel, Input, Textarea, Container, HStack, Icon, useToast } from '@chakra-ui/react';
+import { Button, FormControl, FormErrorMessage, FormLabel, Input, Textarea, Container, HStack, Icon, useToast, Image } from '@chakra-ui/react';
 import { useForm, Controller } from 'react-hook-form';
 import FileUpload from '../fileUpload';
 import { FiFile } from 'react-icons/fi'
@@ -12,7 +12,6 @@ interface FormData {
   description: string;
   category: string;
   tags: string;
-  image: FileList | null;
 }
 
 export const Form = () => {
@@ -20,12 +19,12 @@ export const Form = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [imageGalleryOpen, setImageGalleryOpen] = useState(false)
+  const [featuredImage, setFeaturedImage] = useState<string>("")
   const toast = useToast()
   // const [tags, setTags] = useState<string[]>([])
   const { handleSubmit, register, control, formState: { errors }, reset } = useForm<FormData>({
-    defaultValues:{
-      title:"asdasd"
-    }
+
   });
 
   const onSubmit = async (formData: FormData) => {
@@ -33,10 +32,10 @@ export const Form = () => {
     setIsLoading(true)
 
     const formV = new FormData()
-    const fileInput = Array.from(formData.image != null ? formData.image : []);
-    for (const file of fileInput) {
-      formV.append('image', file);
-    }
+    // const fileInput = Array.from(formData.image != null ? formData.image : []);
+    // for (const file of fileInput) {
+    //   formV.append('image', file);
+    // }
     // const galleryInput = Array.from(formData.gallery != null ? formData.gallery : []);
     // for (const file of galleryInput) {
     //   formV.append('gallery', file);
@@ -47,6 +46,7 @@ export const Form = () => {
     formV.append('description', formData.description)
     formV.append('tags', formData.tags)
     formV.append('gallery', JSON.stringify(galleryImages))
+    formV.append('image', featuredImage)
 
     await fetch('/api/portfolio', {
       method: 'POST',
@@ -54,9 +54,9 @@ export const Form = () => {
     }).then(async (r) => {
       setIsLoading(false)
       const data = await r.json()
-      const mapD = data.data.map((el:any) => {
+      const mapD = data.data.map((el: any) => {
         return {
-          ...el, 
+          ...el,
           gallery: JSON.parse(el.gallery)
         }
       })
@@ -94,7 +94,13 @@ export const Form = () => {
 
   }
 
+  const handleImageSelected = (select: string[]) => {
+    console.log(select, "Selcted Image")
 
+    setFeaturedImage(select[0])
+
+
+  }
 
   console.log(errors, "Errors")
 
@@ -165,18 +171,25 @@ export const Form = () => {
           />
           <FormErrorMessage>{errors.description && errors.description.message}</FormErrorMessage>
         </FormControl>
-        <FormControl isInvalid={!!errors.image}>
+        <FormControl >
           <FormLabel>Feature Image</FormLabel>
-          <FileUpload
+          {featuredImage.length > 0
+            ?
+
+            <Image src={featuredImage} alt='Image' w={'120px'} my={'15px'} />
+            :
+            ""
+          }
+          {/* <FileUpload
             accept={'image/*'}
             multiple={false}
             register={register('image', { validate: validateFiles })}
 
           >
-            <Button leftIcon={<Icon as={FiFile} />}>
-              Upload
-            </Button>
-          </FileUpload>
+          </FileUpload> */}
+          <Button leftIcon={<Icon as={FiFile} />} onClick={() => setImageGalleryOpen(true)}>
+            Change
+          </Button>
           {/* <FileUpload
             accept={'image/*'}
             multiple={false}
@@ -187,11 +200,10 @@ export const Form = () => {
               Upload
             </Button>
           </FileUpload> */}
-          <FormErrorMessage>{errors.image && errors.image.message}</FormErrorMessage>
         </FormControl>
         <FormControl >
           <FormLabel>Gallery</FormLabel>
-          
+
           <Button leftIcon={<Icon as={FiFile} />} onClick={() => { setGalleryOpen(true) }}>
             Cloudinary Gallery
           </Button>
@@ -249,6 +261,12 @@ export const Form = () => {
       </form>
 
       <GalleryBox singleSelect={false} isOpen={galleryOpen} onClose={() => setGalleryOpen(false)} handleSelected={handleSelected} />
+      <GalleryBox
+        singleSelect={true}
+        isOpen={imageGalleryOpen}
+        onClose={() => setImageGalleryOpen(false)}
+        handleSelected={handleImageSelected}
+      />
     </Container>
   )
 }

@@ -22,17 +22,18 @@ export async function POST(request: Request
         const tags = json.get('tags')
 
         const tagsDestruct = (tags as string)?.split(',')
+        const categoryDestruct = (category as string)?.split(',')
 
     console.log(gallery, "Gallery")
         
-    const imageUpload = await upload(image as any)
-    if(imageUpload['error']){
-        return new NextResponse(JSON.stringify(imageUpload['error']), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
-    }
-    console.log(imageUpload.secure_url, "Imae Upload")
+    // const imageUpload = await upload(image as any)
+    // if(imageUpload['error']){
+    //     return new NextResponse(JSON.stringify(imageUpload['error']), {
+    //         status: 500,
+    //         headers: { "Content-Type": "application/json" },
+    //       });
+    // }
+    // console.log(imageUpload.secure_url, "Imae Upload")
         const galleryJson:string[] = []
     // for ( const file of gallery ) {
     //     const fileUpload = await upload(file as any)
@@ -57,9 +58,9 @@ export async function POST(request: Request
               name: name,
               subtitle: subtitle,
               description: description,
-              category: category,
+              category: JSON.stringify(categoryDestruct),
               tags: JSON.stringify(tagsDestruct),
-              image: imageUpload.secure_url,
+              image: image,
               gallery: gallery
             },
   

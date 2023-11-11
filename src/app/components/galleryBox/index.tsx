@@ -57,16 +57,20 @@ const GalleryBox = ({ isOpen, onClose, handleSelected, singleSelect }: Props) =>
     const handleCheckboxChange = (value: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.checked) {
             console.log(value)
-            let imagesSelected = [...selected]
-            setSelected([...imagesSelected, value])
+            if (singleSelect) {
+                console.log(value, "Value")
+                setSelected([value])
+
+            } else {
+
+                let imagesSelected = [...selected]
+                setSelected([...imagesSelected, value])
+            }
         } else {
             let imageRemove = [...selected].filter(el => el != value)
             setSelected(imageRemove)
         }
 
-        if (singleSelect) {
-
-        }
     }
 
     console.log(selected, "Selected images")
@@ -218,9 +222,9 @@ const GalleryBox = ({ isOpen, onClose, handleSelected, singleSelect }: Props) =>
                                 gallery.map((el, i) => {
                                     return (
                                         <Box key={i} width={'20%'}>
-                                            {singleSelect ? (
+                                            {/* {singleSelect ? (
 
-                                                <Radio value={el}>
+                                                <Radio value={el} name='single-image'>
                                                     <Image src={el} alt='' width={100} height={100} />
 
                                                 </Radio>
@@ -231,7 +235,13 @@ const GalleryBox = ({ isOpen, onClose, handleSelected, singleSelect }: Props) =>
                                                     >
                                                         <Image src={el} alt='' width={100} height={100} />
                                                     </Checkbox>
-                                                )}
+                                                )} */}
+
+                                            <Checkbox colorScheme='purple' onChange={handleCheckboxChange(el)}
+                                                isChecked={selected.includes(el)}
+                                            >
+                                                <Image src={el} alt='' width={100} height={100} />
+                                            </Checkbox>
 
 
                                         </Box>
@@ -247,9 +257,9 @@ const GalleryBox = ({ isOpen, onClose, handleSelected, singleSelect }: Props) =>
                             Close
                         </Button>
                         <Button variant='ghost' isDisabled={selected.length === 0}
-                            onClick={() => { 
+                            onClick={() => {
                                 handleSelected(selected)
-                                setSelected([])
+                                // setSelected([])
                             }}
                         >Selected {selected.length}</Button>
                     </ModalFooter>
