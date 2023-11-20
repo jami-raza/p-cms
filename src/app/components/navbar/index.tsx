@@ -22,10 +22,10 @@ const Navbar = () => {
         </div>
         <div>
             <ul className='flex list-none gap-6 justify-center items-center'>
-                <Link href='#about'><li>About</li></Link>
-                <Link href='#experience'><li>Experience</li></Link>
-                <Link href='#portfolio'><li>Portfolio</li></Link>
-               <Link href='#contact'> <li>Contact</li></Link>
+                <Link href='/#about' ><li>About</li></Link>
+                <Link href='/#experience' ><li>Experience</li></Link>
+                <Link href='/#portfolio' ><li>Portfolio</li></Link>
+               <Link href='/#contact' > <li>Contact</li></Link>
                 <Link href='#'><li className='bg-[#8e8c904a] p-4'>Download Resume</li></Link>
             </ul>
         </div>

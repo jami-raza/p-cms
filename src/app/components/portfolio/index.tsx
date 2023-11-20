@@ -1,5 +1,6 @@
 import { Portfolio } from '@/app/types/portfolio.type';
 import Image from 'next/image'
+import Link from 'next/link';
 import React from 'react'
 
 
@@ -25,7 +26,9 @@ const Portfolios = (props:Iprops) => {
                 <p className='text-[13px] text-[#475569]'>{port.subtitle}</p>
               </div>
               <div>
+                <Link href={`/portfolios/${port.id}`} passHref>
                 <Image src={port.image}alt='80scent' width={600} height={200}/>
+                </Link>
               </div>
 
               <div>

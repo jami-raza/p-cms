@@ -5,7 +5,7 @@ const LoadingSpinner = () => {
   return (
     <Box height={'100vh'} w={'100%'} display={'flex'}  alignItems={'center'} justifyContent={'center'} >
     <Spinner 
-    color='red' 
+    color='#46a7c8' 
     thickness='4px'
     speed='0.65s'
     emptyColor='gray.200'
